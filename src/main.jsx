@@ -302,7 +302,7 @@ function App() {
           </section>
         </section>
 
-        <section className="mt-12 rounded-[2rem] bg-gradient-to-r from-[#EC008C] via-[#7C2FC4] to-[#00AEEF] p-8 text-center text-white shadow-2xl">
+        <section className="mt-12 p-8 text-center text-white">
           <p className="mb-3 text-sm font-bold uppercase tracking-[0.3em] text-white/80">
             #WeCanTogetherInfotec
           </p>
