@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createClient } from '@supabase/supabase-js';
-import { Flame, Search, Share2, ShieldCheck, X } from 'lucide-react';
+import { Search, Share2, ShieldCheck, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -127,8 +127,8 @@ function App() {
                   className="h-20 w-auto rounded-xl bg-white p-2 shadow-md"
                 />
 
-                <div className="rounded-full bg-[#EC008C] px-4 py-2 text-sm font-bold text-white">
-                  #WeCanTogetherInfotec
+                <div className="rounded-full bg-white px-5 py-2 text-lg font-black tracking-wide text-[#EC008C] shadow-md ring-1 ring-[#EC008C]/20">
+                  Cancervive
                 </div>
               </div>
 
@@ -153,8 +153,9 @@ function App() {
               transition={{ duration: 4, repeat: Infinity }}
               className="rounded-3xl bg-gradient-to-br from-[#EC008C]/10 via-[#7C2FC4]/10 to-[#00AEEF]/10 p-6 text-center ring-1 ring-[#EC008C]/20"
             >
-              <Flame className="mx-auto mb-4 text-[#EC008C]" size={72} />
-              <h2 className="text-2xl font-black leading-tight text-[#4A4A55]">
+              <CancerviveFlameLarge />
+
+              <h2 className="mt-4 text-2xl font-black leading-tight text-[#4A4A55]">
                 One candle. One name. One moment of love.
               </h2>
             </motion.div>
@@ -331,6 +332,44 @@ function App() {
         )}
       </AnimatePresence>
     </main>
+  );
+}
+
+function CancerviveFlameLarge() {
+  return (
+    <motion.svg
+      viewBox="0 0 220 270"
+      className="mx-auto h-36 w-36 drop-shadow-[0_0_25px_rgba(236,0,140,0.35)]"
+      initial={{ scale: 0.96 }}
+      animate={{
+        scale: [0.96, 1.03, 0.98, 1.04, 0.96],
+        rotate: [-1, 1, -1, 0.5, -1]
+      }}
+      transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+    >
+      <motion.path
+        d="M116 7C147 44 143 77 124 101C153 88 164 60 153 31C197 73 202 121 180 154C203 146 209 121 200 96C238 154 211 255 113 263C28 270 -22 177 44 113C29 151 41 180 70 191C49 151 61 104 99 64C103 91 122 110 116 7Z"
+        fill="#EC008C"
+        animate={{ opacity: [0.92, 1, 0.95, 1, 0.92] }}
+        transition={{ duration: 1.7, repeat: Infinity }}
+      />
+
+      <motion.path
+        d="M112 95C144 126 146 163 122 190C148 180 161 157 159 129C185 176 164 250 105 258C47 253 30 191 67 153C63 180 77 204 101 213C82 172 91 132 112 95Z"
+        fill="#7C2FC4"
+        animate={{ scale: [1, 1.05, 0.98, 1], opacity: [0.95, 1, 0.9, 0.95] }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ transformOrigin: '110px 200px' }}
+      />
+
+      <motion.path
+        d="M103 158C127 183 128 216 105 252C80 236 76 202 91 179C91 199 104 212 116 213C108 196 100 181 103 158Z"
+        fill="#00AEEF"
+        animate={{ y: [0, -3, 1, 0], scale: [1, 1.04, 0.97, 1] }}
+        transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ transformOrigin: '105px 220px' }}
+      />
+    </motion.svg>
   );
 }
 
