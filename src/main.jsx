@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createClient } from '@supabase/supabase-js';
-import { Flame, Heart, Search, Share2, ShieldCheck, X } from 'lucide-react';
+import { Flame, Search, Share2, ShieldCheck, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -62,7 +62,7 @@ function App() {
       message: form.message.trim(),
       from_name: form.from_name.trim(),
       colour: form.colour,
-      approved: false
+      approved: true
     };
 
     if (!clean.honoured_name || !clean.message) return;
@@ -84,11 +84,13 @@ function App() {
     });
 
     setSubmitted(true);
+    loadCandles();
   }
 
   const filteredCandles = useMemo(() => {
     return candles.filter((c) => {
-      const haystack = `${c.honoured_name} ${c.message} ${c.from_name}`.toLowerCase();
+      const displayName = c.honoured_name || c.name || '';
+      const haystack = `${displayName} ${c.message || ''} ${c.from_name || ''}`.toLowerCase();
       const matchesSearch = haystack.includes(query.toLowerCase());
       const matchesType = filter === 'All' || c.candle_type === filter;
       return matchesSearch && matchesType;
@@ -118,8 +120,16 @@ function App() {
         <section className="rounded-[2rem] bg-white/95 p-6 shadow-2xl md:p-10">
           <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
             <div>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#EC008C] px-4 py-2 text-sm font-bold text-white">
-                <Heart size={16} /> #WeCanTogetherInfotec
+              <div className="mb-5 flex flex-wrap items-center gap-4">
+                <img
+                  src="/cancervive-logo.png"
+                  alt="Cancervive logo"
+                  className="h-20 w-auto rounded-xl bg-white p-2 shadow-md"
+                />
+
+                <div className="rounded-full bg-[#EC008C] px-4 py-2 text-sm font-bold text-white">
+                  #WeCanTogetherInfotec
+                </div>
               </div>
 
               <h1 className="text-4xl font-black tracking-tight text-[#7C2FC4] md:text-6xl">
@@ -222,12 +232,13 @@ function App() {
 
             {submitted && (
               <div className="mt-5 rounded-2xl bg-[#EC008C]/10 p-4 text-sm font-semibold text-[#4A4A55]">
-                Thank you 💛 Your candle was submitted and will appear once approved.
+                Thank you 💛 Your candle has been added.
               </div>
             )}
 
             <div className="mt-5 flex gap-2 rounded-2xl bg-[#00AEEF]/10 p-4 text-sm font-semibold leading-6 text-[#4A4A55]">
-              <ShieldCheck size={18} /> This version uses moderation, so new candles do not appear publicly until approved.
+              <ShieldCheck size={18} />
+              Every candle shared here represents love, remembrance, support and hope.
             </div>
           </form>
 
@@ -272,7 +283,7 @@ function App() {
             ) : (
               <AnimatePresence mode="popLayout">
                 {filteredCandles.length ? (
-                  <motion.div layout className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                  <motion.div layout className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {filteredCandles.map((candle) => (
                       <CandleCard
                         key={candle.id}
@@ -283,7 +294,7 @@ function App() {
                   </motion.div>
                 ) : (
                   <div className="rounded-[2rem] bg-white/95 p-10 text-center shadow-xl">
-                    No candles showing yet. Once approved, candles will appear here.
+                    No candles showing yet. Light the first one.
                   </div>
                 )}
               </AnimatePresence>
@@ -295,11 +306,22 @@ function App() {
           <p className="mb-3 text-sm font-bold uppercase tracking-[0.3em] text-white/80">
             #WeCanTogetherInfotec
           </p>
-          <h2 className="text-3xl font-black md:text-5xl">No one fights cancer alone.</h2>
+
+          <h2 className="text-3xl font-black md:text-5xl">
+            No one fights cancer alone.
+          </h2>
+
           <p className="mx-auto mt-5 max-w-2xl text-lg font-semibold leading-8 text-white/90">
-            Thank you for lighting a candle, sharing a memory, supporting a warrior, or simply standing
-            with those affected by cancer.
+            Thank you for lighting a candle, sharing a memory, supporting a warrior,
+            or simply standing with those affected by cancer.
           </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <div className="rounded-full bg-white/20 px-5 py-3 font-bold backdrop-blur">💜 Hope</div>
+            <div className="rounded-full bg-white/20 px-5 py-3 font-bold backdrop-blur">🩷 Support</div>
+            <div className="rounded-full bg-white/20 px-5 py-3 font-bold backdrop-blur">💙 Remembrance</div>
+            <div className="rounded-full bg-white/20 px-5 py-3 font-bold backdrop-blur">🕯 Together</div>
+          </div>
         </section>
       </div>
 
@@ -312,42 +334,46 @@ function App() {
   );
 }
 
-function FlameIcon({ colour }) {
+function FlameIcon({ colour, large = false }) {
   const gradient = candleColours[colour] || candleColours.gold;
 
   return (
-    <div className="mx-auto flex h-28 items-end justify-center">
-      <div className="relative h-16 w-12 rounded-b-2xl bg-gradient-to-b from-white to-pink-50 shadow-inner">
-        <div className="absolute left-1/2 top-[-40px] h-14 w-9 -translate-x-1/2">
-          <motion.div
-            animate={{
-              scale: [1, 1.13, 0.96, 1.08, 1],
-              rotate: [-4, 3, -2, 2, -3],
-              x: [0, 1, -1, 1, 0]
-            }}
-            transition={{ duration: 1.35, repeat: Infinity, ease: 'easeInOut' }}
-            className={`absolute inset-0 bg-gradient-to-b ${gradient} shadow-[0_0_32px_rgba(236,0,140,0.65)]`}
-            style={{ borderRadius: '70% 30% 55% 45% / 65% 45% 55% 35%' }}
-          />
+    <div className={`mx-auto flex items-end justify-center ${large ? 'h-32' : 'h-16'}`}>
+      <div className="relative flex flex-col items-center">
+        <motion.div
+          animate={{
+            scale: [1, 1.16, 0.94, 1.08, 1],
+            rotate: [-5, 4, -3, 2, -4],
+            x: [0, 1, -1, 1, 0]
+          }}
+          transition={{ duration: 1.25, repeat: Infinity, ease: 'easeInOut' }}
+          className={`bg-gradient-to-b ${gradient} shadow-[0_0_30px_rgba(236,0,140,0.65)] ${
+            large ? 'h-20 w-12' : 'h-11 w-7'
+          }`}
+          style={{ borderRadius: '72% 28% 58% 42% / 68% 42% 58% 32%' }}
+        />
 
-          <motion.div
-            animate={{
-              scale: [1, 0.85, 1.05, 0.9, 1],
-              y: [0, 1, -1, 0]
-            }}
-            transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute left-1/2 top-5 h-6 w-4 -translate-x-1/2 bg-white/90"
-            style={{ borderRadius: '70% 30% 55% 45% / 65% 45% 55% 35%' }}
-          />
-        </div>
+        <motion.div
+          animate={{
+            scale: [1, 0.86, 1.08, 0.92, 1],
+            y: [0, 1, -1, 0]
+          }}
+          transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute left-1/2 -translate-x-1/2 bg-white/90 ${
+            large ? 'top-9 h-8 w-5' : 'top-5 h-5 w-3'
+          }`}
+          style={{ borderRadius: '72% 28% 58% 42% / 68% 42% 58% 32%' }}
+        />
 
-        <div className="absolute left-1/2 top-[-5px] h-5 w-1 -translate-x-1/2 rounded-full bg-[#4A4A55]" />
+        <div className={`mt-1 rounded-full bg-[#4A4A55] ${large ? 'h-8 w-1.5' : 'h-5 w-1'}`} />
       </div>
     </div>
   );
 }
 
 function CandleCard({ candle, onClick }) {
+  const displayName = candle.honoured_name || candle.name || 'Unnamed candle';
+
   return (
     <motion.button
       type="button"
@@ -356,20 +382,20 @@ function CandleCard({ candle, onClick }) {
       initial={{ opacity: 0, y: 18, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.96 }}
-      whileHover={{ y: -5, scale: 1.02 }}
-      className="rounded-3xl bg-white/95 p-6 text-center shadow-lg ring-1 ring-white/80 transition hover:shadow-2xl"
+      whileHover={{ y: -4, scale: 1.02 }}
+      className="min-h-[190px] rounded-3xl bg-white/95 px-4 py-5 text-center shadow-lg ring-1 ring-white/80 transition hover:shadow-2xl"
     >
       <FlameIcon colour={candle.colour} />
 
-      <p className="mt-3 text-xs font-black uppercase tracking-wide text-[#EC008C]">
+      <p className="mt-3 text-[11px] font-black uppercase tracking-wide text-[#EC008C]">
         {candle.candle_type}
       </p>
 
-      <h3 className="mt-2 text-xl font-black leading-tight text-[#4A4A55]">
-        {candle.honoured_name}
+      <h3 className="mt-2 line-clamp-3 text-lg font-black leading-tight text-[#4A4A55]">
+        {displayName}
       </h3>
 
-      <p className="mt-3 text-xs font-semibold text-[#7C2FC4]">
+      <p className="mt-3 text-[11px] font-semibold text-[#7C2FC4]">
         Click to view message
       </p>
     </motion.button>
@@ -377,6 +403,8 @@ function CandleCard({ candle, onClick }) {
 }
 
 function CandleModal({ candle, onClose }) {
+  const displayName = candle.honoured_name || candle.name || 'Unnamed candle';
+
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm"
@@ -399,14 +427,14 @@ function CandleModal({ candle, onClose }) {
           <X size={18} />
         </button>
 
-        <FlameIcon colour={candle.colour} />
+        <FlameIcon colour={candle.colour} large />
 
         <p className="mt-2 text-sm font-black uppercase tracking-wide text-[#EC008C]">
           {candle.candle_type}
         </p>
 
         <h2 className="mt-2 text-3xl font-black text-[#4A4A55]">
-          {candle.honoured_name}
+          {displayName}
         </h2>
 
         <p className="mt-5 text-lg font-semibold leading-8 text-[#4A4A55]">
